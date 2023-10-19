@@ -1,0 +1,70 @@
+﻿@using BlazorApp1.Data
+<MyErrorBoundary @ref="_errorBoundary">
+    <ChildContent>
+        @ChildContent
+    </ChildContent>
+    <ErrorContent>
+        <div class="card text-white mb-3">
+            <div class="card-header">Error occurred</div>
+            <div class="card-body">
+                <h4 class="card-title">Something went wrong...</h4>
+                <p class="card-text">We're sorry but currently we cannot display this section due to an internal error.</p>
+                
+                @if (!_showErrorInformation)
+                {
+                    <button class="btn btn-link" @onclick="ShowInformation">More information</button>
+                }
+                else
+                {
+                    <button class="btn btn-link" @onclick="ShowInformation">Hide information</button>
+                    if (_errorBoundary is { CurrentException: not null})
+                    {
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-3">
+                                    <p>Message:</p>
+                                </div>
+                                <div class="col-9">
+                                    <p>@_errorBoundary.CurrentException.Message</p>
+                                </div>
+                                
+                                
+                                <div class="col-3">
+                                    <p>Source:</p>
+                                </div>
+                                <div class="col-9">
+                                    <p>@_errorBoundary.CurrentException.Source</p>
+                                </div>
+
+                                <div class="col-3">
+                                    <p>StackTrace:</p>
+                                </div>
+                                <div class="col-9">
+                                    <p>@_errorBoundary.CurrentException.StackTrace</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+                @if (_errorBoundary != null)
+                {
+                <button class="btn btn-primary" @onclick="_errorBoundary.Recover">Recover connection</button>
+                }
+            </div>
+        </div>
+    </ErrorContent>
+</MyErrorBoundary>
+
+@code {
+    private MyErrorBoundary? _errorBoundary;
+    
+    private bool _showErrorInformation;
+    private void ShowInformation()
+    {
+        _showErrorInformation = !_showErrorInformation;
+    }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}
